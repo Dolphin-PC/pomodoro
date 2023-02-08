@@ -10,9 +10,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const twentyFiveMinute = 60 * 25;
-  int totalSeconds = twentyFiveMinute;
+  static const initMinute = 5;
+  int totalSeconds = initMinute;
   bool isRunning = false;
+  bool isStarted = false;
   int totalPomodoro = 0;
   late Timer timer;
 
@@ -21,7 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         totalPomodoro++;
         isRunning = false;
-        totalSeconds = twentyFiveMinute;
+        isStarted = false;
+        totalSeconds = initMinute;
       });
       timer.cancel();
     } else {
@@ -39,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       isRunning = true;
+      isStarted = true;
     });
   }
 
@@ -47,6 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isRunning = false;
     });
+  }
+
+  void onResetPressed() {
+    setState(() {
+      totalSeconds = initMinute;
+      isRunning = false;
+      isStarted = false;
+    });
+    timer.cancel();
   }
 
   String format(int seconds) {
@@ -77,15 +89,26 @@ class _HomeScreenState extends State<HomeScreen> {
         Flexible(
           flex: 2,
           child: Center(
-            child: IconButton(
-              iconSize: 120,
-              color: Theme.of(context).cardColor,
-              onPressed: isRunning ? onPausePressed : onStartPressed,
-              icon: Icon(
-                isRunning
-                    ? Icons.pause_circle_outline
-                    : Icons.play_circle_outline,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  iconSize: 120,
+                  color: Theme.of(context).cardColor,
+                  onPressed: isRunning ? onPausePressed : onStartPressed,
+                  icon: Icon(
+                    isRunning
+                        ? Icons.pause_circle_outline
+                        : Icons.play_circle_outline,
+                  ),
+                ),
+                IconButton(
+                  iconSize: isStarted ? 120 : 0,
+                  color: Theme.of(context).cardColor,
+                  onPressed: onResetPressed,
+                  icon: const Icon(Icons.change_circle_outlined),
+                ),
+              ],
             ),
           ),
         ),
